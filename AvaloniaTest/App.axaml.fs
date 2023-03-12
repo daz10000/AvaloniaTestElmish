@@ -10,18 +10,48 @@ type App() =
 
     override this.Initialize() =
         // Initialize Avalonia controls from NuGet packages:
+        printfn "App.Initialize top"
         let _ = typeof<Avalonia.Controls.DataGrid>
+        printfn "App.Initialize loading"
 
         AvaloniaXamlLoader.Load(this)
+        printfn "App.Initialize loaded"
 
     override this.OnFrameworkInitializationCompleted() =
+        printfn "App.OnFrameworkInit top"
         match this.ApplicationLifetime with
-        | :? IClassicDesktopStyleApplicationLifetime as desktop ->         
+        | :? IClassicDesktopStyleApplicationLifetime as desktop ->
+            printfn "App.OnFrameworkInit classic view"
             let view = MainView()
+            printfn "App.OnFrameworkInit got view"
             desktop.MainWindow <- view
-            ViewModels.MainViewModel.vm.Start(view)
-        | _ -> 
-            // leave this here for design view re-renders
-            ()
+            printfn "App.OnFrameworkInit starting"
+            try
+                ViewModels.MainViewModel.vm.Start(view)
+            with x ->
+                printfn $"Exception: {x.Message} \n {x.StackTrace}"
+            printfn "App.OnFrameworkInit started"
+        | :? ISingleViewApplicationLifetime as singleViewLifetime ->
+            try
+                printfn "App.OnFrameworkInit single view lifetime"
+                printfn "App.OnFrameworkInit set mainview"
+                singleViewLifetime.MainView <- CounterView()
+                //singleViewLifetime.MainView.IsEnabled <- true
 
+                //printfn "App.OnFrameworkInit get vm y"
+                //let y = ViewModels.CounterViewModel.vm
+                //printfn "App.OnFrameworkInit get vm x"
+                let x = ViewModels.MainViewModel.vm
+                printfn "App.OnFrameworkInit start vm"
+                x.Start(singleViewLifetime.MainView)
+                printfn "App.OnFrameworkInit done"
+            with x ->
+                printfn $"Exception: {x.Message} \n {x.StackTrace}"
+
+        | _ ->
+            // leave this here for design view re-renders
+            printfn "App.OnFrameworkInit other view"
+
+        printfn "App.OnFrameworkInit mark completed"
         base.OnFrameworkInitializationCompleted()
+        printfn "App.OnFrameworkInit done"
