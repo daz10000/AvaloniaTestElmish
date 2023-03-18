@@ -24,7 +24,8 @@ type App() =
             printfn "App.OnFrameworkInit classic view"
             let view = MainView()
             printfn "App.OnFrameworkInit got view"
-            desktop.MainWindow <- view
+            // HACKHACK - commented out since this won't work for a usercontrol
+            // desktop.MainWindow <- view
             printfn "App.OnFrameworkInit starting"
             try
                 ViewModels.MainViewModel.vm.Start(view)
@@ -35,15 +36,13 @@ type App() =
             try
                 printfn "App.OnFrameworkInit single view lifetime"
                 printfn "App.OnFrameworkInit set mainview"
-                singleViewLifetime.MainView <- CounterView()
-                //singleViewLifetime.MainView.IsEnabled <- true
 
-                //printfn "App.OnFrameworkInit get vm y"
-                //let y = ViewModels.CounterViewModel.vm
-                //printfn "App.OnFrameworkInit get vm x"
+                let view = MainView()
+                singleViewLifetime.MainView <- view
+
                 let x = ViewModels.MainViewModel.vm
                 printfn "App.OnFrameworkInit start vm"
-                x.Start(singleViewLifetime.MainView)
+                x.Start(view)
                 printfn "App.OnFrameworkInit done"
             with x ->
                 printfn $"Exception: {x.Message} \n {x.StackTrace}"
