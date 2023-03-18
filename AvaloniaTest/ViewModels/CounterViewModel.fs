@@ -21,14 +21,12 @@ type Msg =
     | Reset
 
 let init() =
-    printfn $"CounterViewModel: init model state"
     {
         Count = 100
         Actions = [ { Description = "Initialized count."; Timestamp = DateTime.Now } ]
     }
 
 let update (msg: Msg) (model: Model) =
-    printfn $"Update:msg={msg}"
     match msg with
     | Increment ->
         { model with
@@ -44,10 +42,9 @@ let update (msg: Msg) (model: Model) =
         init()
 
 let bindings ()  : Binding<Model, Msg> list =
-    printfn "bindings: called"
     [
-        "Count" |> Binding.oneWay (fun m -> printfn "bind: get count"; m.Count)
-        "Actions" |> Binding.oneWay (fun m -> printfn "bind: get actions"; m.Actions)
+        "Count" |> Binding.oneWay (fun m ->  m.Count)
+        "Actions" |> Binding.oneWay (fun m ->  m.Actions)
         "Increment" |> Binding.cmd Increment
         "Decrement" |> Binding.cmd Decrement
         "Reset" |> Binding.cmd Reset
@@ -55,11 +52,9 @@ let bindings ()  : Binding<Model, Msg> list =
 
 let designVM = ViewModel.designInstance (init()) (bindings())
 
-printfn "CounterViewModel - initializing vm"
 let vm = Start(AvaloniaProgram.mkSimple init update bindings
             |> AvaloniaProgram.withElmishErrorHandler
                 (fun msg exn ->
                     printfn $"ElmishErrorHandlerCV: msg={msg}\n{exn.Message}\n{exn.StackTrace}"
                 )
         )
-printfn "CounterViewModel - done"

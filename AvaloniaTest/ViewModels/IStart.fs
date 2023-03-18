@@ -9,7 +9,6 @@ type IStart =
 type Start<'model, 'msg>(program: AvaloniaProgram<'model, 'msg>) =
     interface IStart with
         member this.Start(view: Avalonia.Controls.Control) =
-            printfn $"Start:IStart running startElmishLoop"
             try
                 program
                 |> AvaloniaProgram.startElmishLoop view

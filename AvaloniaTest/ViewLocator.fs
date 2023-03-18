@@ -7,7 +7,7 @@ open AvaloniaTest.ViewModels
 
 type ViewLocator() =
     interface IDataTemplate with
-        
+
         member this.Build(data) =
             let t = data.GetType()
             let viewName = t.FullName.Replace("ViewModels", "Views").Replace("ViewModel", "View")
@@ -21,6 +21,6 @@ type ViewLocator() =
                 let view = downcast Activator.CreateInstance(typ)
                 vm.Start(view)
                 view
-                
-        member this.Match(data) = 
+
+        member this.Match(data) =
             data :? IStart
